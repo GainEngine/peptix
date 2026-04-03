@@ -110,7 +110,7 @@ export function PaywallScreen({ navigation }: Props) {
             Your peptide{'\n'}companion.
           </Text>
           <Text variant="body" align="center" style={styles.subheadline}>
-            Track schedules, monitor costs,{'\n'}and share your stack.
+            Track schedules, monitor costs,{'\n'}and get automatic reminders of your doses!
           </Text>
         </View>
 

@@ -3,3 +3,4 @@ app.json
 eas.json
 .env.local
 .env.*.local
+node_modules

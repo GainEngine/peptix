@@ -19,7 +19,7 @@ interface ProfileModalProps {
   onClose: () => void;
 }
 
-const CONTACT_EMAIL = 'hello@peptix.app';
+const CONTACT_EMAIL = 'gainengine.app@gmail.com';
 
 export function ProfileModal({ visible, onClose }: ProfileModalProps) {
   const insets = useSafeAreaInsets();

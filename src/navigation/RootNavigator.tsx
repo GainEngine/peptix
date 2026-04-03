@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { GetStartedScreen } from '../screens/GetStartedScreen';
+import { DisclaimerScreen } from '../screens/DisclaimerScreen';
 import { PaywallScreen } from '../screens/PaywallScreen';
 import { MainTabNavigator } from './MainTabNavigator';
 import { useSubscription } from '../hooks/useSubscription';
@@ -35,6 +36,7 @@ export function RootNavigator() {
         }}
       >
         <Stack.Screen name="GetStarted" component={GetStartedScreen} />
+        <Stack.Screen name="Disclaimer" component={DisclaimerScreen} />
         <Stack.Screen name="Paywall" component={PaywallScreen} />
         <Stack.Screen name="Main" component={MainTabNavigator} />
       </Stack.Navigator>

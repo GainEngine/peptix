@@ -21,7 +21,7 @@ type Props = {
 
 const FEATURES = [
   'Full peptide schedule tracking',
-  'Weekly push reminders',
+  'Automatic push reminders & notifications',
   'Cost and usage analytics',
   'My Stack share card',
 ];
@@ -131,16 +131,16 @@ export function PaywallScreen({ navigation }: Props) {
               <Text variant="label" align="center" style={styles.trialBadge}>
                 14 DAYS FREE
               </Text>
-              <Text variant="body" align="center" style={styles.priceText}>
+              <Text variant="body" align="center" style={styles.legal}>
                 Then {regularPrice} / month
               </Text>
             </>
           ) : (
-            <Text variant="body" align="center" style={styles.priceText}>
+            <Text variant="body" align="center" style={styles.legal}>
               {regularPrice} / month
             </Text>
           )}
-          <Text variant="label" align="center" style={styles.cancelNote}>
+          <Text variant="label" align="center" style={styles.trialBadge}>
             Cancel anytime
           </Text>
         </View>
@@ -171,7 +171,7 @@ export function PaywallScreen({ navigation }: Props) {
         >
           {restoring
             ? <ActivityIndicator size="small" color={theme.colors.text.secondary} />
-            : <Text variant="label" style={styles.restoreText}>Restore purchase</Text>
+            : <Text variant="label" style={styles.legal}>Restore purchase</Text>
           }
         </TouchableOpacity>
 

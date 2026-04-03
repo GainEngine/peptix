@@ -4,6 +4,7 @@ import type { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 // ─── Root Stack ───────────────────────────────────────────────────────────────
 export type RootStackParamList = {
   GetStarted: undefined;
+  Disclaimer: undefined;
   Paywall: undefined;
   Main: undefined;
 };

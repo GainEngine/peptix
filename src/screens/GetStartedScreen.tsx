@@ -21,10 +21,12 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { Text } from '../components/ui';
 import { theme } from '../theme';
 import type { GetStartedNavigationProp } from '../navigation/types';
+import { DISCLAIMER_KEY } from './DisclaimerScreen';
 
 // Hero asset — vial photo provided by user
 const HERO_SOURCE = require('../../assets/HERO_IMAGE.jpg');
@@ -43,6 +45,11 @@ export function GetStartedScreen() {
   const { height } = useWindowDimensions();
 
   const navigation = useNavigation<GetStartedNavigationProp>();
+
+  async function handleGetStarted() {
+    const accepted = await AsyncStorage.getItem(DISCLAIMER_KEY);
+    navigation.navigate(accepted ? 'Paywall' : 'Disclaimer');
+  }
 
   return (
     <View style={styles.root}>
@@ -84,13 +91,13 @@ export function GetStartedScreen() {
         >
           Peptide tracker and scheduler,{'\n'}
           keep track of your{'\n'}
-          peptide schedules
+          peptide doses.
         </Text>
 
         {/* Plain text CTA — reference has zero border / zero box */}
         <TouchableOpacity
           activeOpacity={0.55}
-          onPress={() => navigation.navigate('Paywall')}
+          onPress={handleGetStarted}
           hitSlop={{ top: 12, bottom: 12, left: 24, right: 24 }}
         >
           <Text variant="button" color={theme.colors.text.primary}>

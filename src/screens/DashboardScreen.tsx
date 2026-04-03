@@ -170,12 +170,16 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: 120,
+    minHeight: 230,
   },
-  emptyBgImage: {
-    resizeMode: 'cover',
-    opacity: 0.22,
-  },
+emptyBgImage: {
+  resizeMode: 'cover',
+  opacity: 0.25,
+  transform: [
+    { scale: 0.8 },     // zoom hieman sisään
+    { rotate: '25deg' }  // pieni kallistus
+  ],
+},
   emptyOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(28,29,32,0.72)',

@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "Peptix",
+    "slug": "peptix",
+    "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "backgroundColor": "#1A1B1E"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.peptix.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSUserNotificationUsageDescription": "Peptix sends reminders for your peptide schedule.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.peptix.app",
+      "versionCode": 1,
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
+        "android.permission.READ_MEDIA_IMAGES",
+        "android.permission.READ_MEDIA_VIDEO",
+        "android.permission.READ_MEDIA_AUDIO"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "sounds": []
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Peptix saves your stack card to your photo library.",
+          "savePhotosPermission": "Peptix saves your stack card to your photo library."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5e4e7ce1-3551-4840-bde6-afd5440a2ae0"
+      }
+    },
+    "owner": "tonba"
+  }
+}

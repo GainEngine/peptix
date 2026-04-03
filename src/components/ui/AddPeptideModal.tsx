@@ -262,6 +262,11 @@ export function AddPeptideModal({ visible, onClose, onSave }: Props) {
             setPickerVisible(false);
             setTimeout(() => dosageRef.current?.focus(), 300);
           }}
+          onSelectCustom={customName => {
+            setName(customName);
+            setPickerVisible(false);
+            setTimeout(() => dosageRef.current?.focus(), 300);
+          }}
         />
       </View>
     </Modal>

@@ -24,23 +24,36 @@ import { theme } from '../../theme';
 interface PeptidePickerProps {
   visible: boolean;
   onSelect: (item: PeptideCatalogItem) => void;
+  onSelectCustom: (name: string) => void;
   onClose: () => void;
 }
 
-export function PeptidePicker({ visible, onSelect, onClose }: PeptidePickerProps) {
+export function PeptidePicker({ visible, onSelect, onSelectCustom, onClose }: PeptidePickerProps) {
   const insets = useSafeAreaInsets();
   const [query, setQuery] = useState('');
 
+  const trimmedQuery = query.trim();
+
   const filtered = useMemo(() => {
-    const q = query.toLowerCase().trim();
+    const q = trimmedQuery.toLowerCase();
     if (!q) return PEPTIDE_CATALOG;
     return PEPTIDE_CATALOG.filter(p => p.name.toLowerCase().includes(q));
-  }, [query]);
+  }, [trimmedQuery]);
+
+  const showCustomRow = trimmedQuery.length > 0 &&
+    !PEPTIDE_CATALOG.some(p => p.name.toLowerCase() === trimmedQuery.toLowerCase());
 
   function handleSelect(item: PeptideCatalogItem) {
     Keyboard.dismiss();
     setQuery('');
     onSelect(item);
+  }
+
+  function handleCustomSelect() {
+    Keyboard.dismiss();
+    const name = trimmedQuery;
+    setQuery('');
+    onSelectCustom(name);
   }
 
   function handleClose() {
@@ -82,9 +95,26 @@ export function PeptidePicker({ visible, onSelect, onClose }: PeptidePickerProps
           placeholderTextColor="rgba(255,255,255,0.18)"
           autoCapitalize="none"
           returnKeyType="search"
-          autoFocus
         />
       </View>
+
+      {showCustomRow && (
+        <>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={handleCustomSelect}
+            activeOpacity={0.6}
+          >
+            <Text variant="body" style={styles.rowName}>
+              {trimmedQuery}
+            </Text>
+            <Text variant="label" style={styles.customTag}>
+              custom
+            </Text>
+          </TouchableOpacity>
+          <View style={styles.divider} />
+        </>
+      )}
 
       <FlatList
         data={filtered}
@@ -155,14 +185,22 @@ const styles = StyleSheet.create({
   },
 
   // List
-  listContent: {
-    paddingHorizontal: theme.spacing[6],
-  },
+  listContent: {},
   row: {
     paddingVertical: theme.spacing[4],
+    paddingHorizontal: theme.spacing[6],
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   rowName: {
     fontWeight: '300',
+  },
+  customTag: {
+    fontSize: 10,
+    letterSpacing: 0.8,
+    color: theme.colors.text.secondary,
+    opacity: 0.45,
   },
   divider: {
     height: StyleSheet.hairlineWidth,

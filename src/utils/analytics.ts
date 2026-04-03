@@ -6,6 +6,7 @@
  */
 
 import type { PeptideSchedule, Weekday } from '../types/peptide';
+import type { DoseEvent } from '../types/dose';
 import { findCatalogItem } from '../data/peptideCatalog';
 
 // Maps Weekday abbreviation → JS Date.getDay() (0=Sun, 1=Mon, ...)
@@ -44,21 +45,12 @@ function firedOn(schedule: PeptideSchedule, date: Date, now: Date): boolean {
   return false;
 }
 
-/** Total number of doses taken since schedule was created */
-export function calculateUsageCount(schedule: PeptideSchedule): number {
-  const start = new Date(schedule.createdAt);
-  const now = new Date();
-  let count = 0;
-
-  const cursor = new Date(start);
-  cursor.setHours(0, 0, 0, 0);
-
-  while (cursor <= now) {
-    if (firedOn(schedule, cursor, now)) count++;
-    cursor.setDate(cursor.getDate() + 1);
-  }
-
-  return count;
+/** Total number of recorded doses for a schedule */
+export function calculateUsageCount(
+  schedule: PeptideSchedule,
+  events: DoseEvent[],
+): number {
+  return events.filter(e => e.scheduleId === schedule.id).length;
 }
 
 /** Total cost in USD based on catalog pricing */
@@ -80,53 +72,48 @@ export interface CostDataPoint {
 }
 
 /**
- * Build cumulative cost data points for the mini graph.
- * Returns at most MAX_POINTS samples evenly distributed over the schedule lifetime.
+ * Build cumulative cost data points from recorded DoseEvents.
+ * One data point per actual recorded dose — shows real staircase of usage.
  */
 export function generateCostHistory(
   schedule: PeptideSchedule,
-  maxPoints = 14,
+  events: DoseEvent[],
+  maxPoints = 60,
 ): CostDataPoint[] {
   const item = findCatalogItem(schedule.name);
   const doseMg = item ? dosageToMg(schedule.dosage, schedule.dosageUnit) : 0;
   const pricePerDose = doseMg * (item?.pricePerMg ?? 0);
 
-  const start = new Date(schedule.createdAt);
-  const now = new Date();
+  const scheduleEvents = events
+    .filter(e => e.scheduleId === schedule.id)
+    .sort((a, b) => a.takenAt.localeCompare(b.takenAt));
 
-  const totalDays = Math.max(
-    1,
-    Math.ceil((now.getTime() - start.getTime()) / 86_400_000),
-  );
-
-  const sampleEvery = Math.max(1, Math.floor(totalDays / maxPoints));
-  const points: CostDataPoint[] = [];
-  let cumCost = 0;
-
-  const cursor = new Date(start);
-  cursor.setHours(0, 0, 0, 0);
-  let dayOffset = 0;
-
-  while (cursor <= now) {
-    if (firedOn(schedule, cursor, now)) {
-      cumCost += pricePerDose;
-    }
-
-    if (dayOffset % sampleEvery === 0 || cursor.toDateString() === now.toDateString()) {
-      points.push({ x: dayOffset, y: parseFloat(cumCost.toFixed(2)) });
-    }
-
-    cursor.setDate(cursor.getDate() + 1);
-    dayOffset++;
-  }
-
-  // Always include day-0 baseline and the current endpoint
-  if (points.length === 0) {
+  if (scheduleEvents.length === 0) {
     return [{ x: 0, y: 0 }, { x: 1, y: 0 }];
   }
-  if (points[0].x !== 0) points.unshift({ x: 0, y: 0 });
 
-  return points;
+  const startMs = new Date(schedule.createdAt).getTime();
+  const all: CostDataPoint[] = [{ x: 0, y: 0 }];
+  let cumCost = 0;
+
+  for (const event of scheduleEvents) {
+    cumCost += pricePerDose;
+    const dayOffset = Math.round(
+      (new Date(event.takenAt).getTime() - startMs) / 86_400_000,
+    );
+    all.push({ x: Math.max(dayOffset, 1), y: parseFloat(cumCost.toFixed(2)) });
+  }
+
+  if (all.length <= maxPoints) return all;
+
+  // Downsample — keep first + last always
+  const result: CostDataPoint[] = [all[0]];
+  const step = (all.length - 2) / (maxPoints - 2);
+  for (let i = 1; i < maxPoints - 1; i++) {
+    result.push(all[Math.round(i * step)]);
+  }
+  result.push(all[all.length - 1]);
+  return result;
 }
 
 /** Human-readable start date string: "Jan 1, 2025" */

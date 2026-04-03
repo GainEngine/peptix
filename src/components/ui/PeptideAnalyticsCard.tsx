@@ -12,6 +12,7 @@ import { View, StyleSheet, useWindowDimensions } from 'react-native';
 import { Text } from './Text';
 import { MiniCostChart } from '../charts/MiniCostChart';
 import type { PeptideSchedule } from '../../types/peptide';
+import type { DoseEvent } from '../../types/dose';
 import {
   calculateUsageCount,
   calculateTotalCost,
@@ -24,16 +25,16 @@ import { formatTimeLocale } from '../../utils/time';
 
 interface PeptideAnalyticsCardProps {
   schedule: PeptideSchedule;
+  events: DoseEvent[];
 }
 
-export function PeptideAnalyticsCard({ schedule }: PeptideAnalyticsCardProps) {
+export function PeptideAnalyticsCard({ schedule, events }: PeptideAnalyticsCardProps) {
   const { width } = useWindowDimensions();
-  // Account for screen padding (24) on each side
   const cardWidth = width - theme.spacing[6] * 2;
 
-  const usageCount = useMemo(() => calculateUsageCount(schedule), [schedule]);
+  const usageCount = useMemo(() => calculateUsageCount(schedule, events), [schedule, events]);
   const totalCost  = useMemo(() => calculateTotalCost(schedule, usageCount), [schedule, usageCount]);
-  const history    = useMemo(() => generateCostHistory(schedule), [schedule]);
+  const history    = useMemo(() => generateCostHistory(schedule, events), [schedule, events]);
 
   const hasCatalogPrice = !!findCatalogItem(schedule.name);
   const totalLabel = hasCatalogPrice

@@ -19,6 +19,7 @@ import { GlobalHeader } from '../components/ui/GlobalHeader';
 import { Text } from '../components/ui';
 import { PeptideAnalyticsCard } from '../components/ui/PeptideAnalyticsCard';
 import { usePeptideSchedules } from '../hooks/usePeptideSchedules';
+import { useDoseTracking } from '../hooks/useDoseTracking';
 import { theme } from '../theme';
 
 const HERO = require('../../assets/HERO_IMAGE.jpg');
@@ -26,6 +27,7 @@ const HERO = require('../../assets/HERO_IMAGE.jpg');
 export function AnalyticsScreen() {
   const insets = useSafeAreaInsets();
   const { schedules } = usePeptideSchedules();
+  const doseEvents = useDoseTracking(schedules);
 
   const isEmpty = schedules.length === 0;
 
@@ -71,7 +73,7 @@ export function AnalyticsScreen() {
           showsVerticalScrollIndicator={false}
         >
           {schedules.map(schedule => (
-            <PeptideAnalyticsCard key={schedule.id} schedule={schedule} />
+            <PeptideAnalyticsCard key={schedule.id} schedule={schedule} events={doseEvents} />
           ))}
         </ScrollView>
       )}

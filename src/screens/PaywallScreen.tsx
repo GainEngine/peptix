@@ -50,7 +50,13 @@ export function PaywallScreen({ navigation }: Props) {
   }, []);
 
   async function handlePurchase() {
-    if (!pkg) return;
+    if (!pkg) {
+      Alert.alert(
+        'Not available',
+        'Could not load subscription. Please check your connection and try again.',
+      );
+      return;
+    }
     setPurchasing(true);
     try {
       const { customerInfo } = await Purchases.purchasePackage(pkg);
@@ -145,7 +151,7 @@ export function PaywallScreen({ navigation }: Props) {
         <TouchableOpacity
           style={[styles.ctaBtn, (purchasing || loading) && styles.ctaDisabled]}
           onPress={handlePurchase}
-          disabled={purchasing || loading || !pkg}
+          disabled={purchasing || loading}
           activeOpacity={0.75}
         >
           {purchasing || loading ? (

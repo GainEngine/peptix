@@ -37,7 +37,8 @@ export function PaywallScreen({ navigation }: Props) {
     async function load() {
       try {
         const offerings = await Purchases.getOfferings();
-        const monthly = offerings.current?.monthly ?? null;
+        const offering = offerings.current ?? offerings.all['PEPTIX_DEFAULT'] ?? null;
+        const monthly = offering?.monthly ?? null;
         setPkg(monthly);
       } catch {
         // no-op — fallback to hardcoded price

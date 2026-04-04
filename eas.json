@@ -27,7 +27,6 @@
   "submit": {
     "production": {
       "ios": {
-        "appleId": "toni.henriksson@icloud.com",
         "ascAppId": "6761601962",
         "appleTeamId": "8R368Q49MH",
         "language": "en-US"
